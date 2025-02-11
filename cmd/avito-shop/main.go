@@ -1,7 +1,15 @@
 package main
 
+import (
+	"Avito-trainee/internal/config"
+	"log"
+)
+
 func main() {
-	// TODO: init config
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Can't load config %v\n", err)
+	}
 
 	// TODO: init db
 
