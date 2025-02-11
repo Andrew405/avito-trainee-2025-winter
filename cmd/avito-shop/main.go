@@ -1,15 +1,16 @@
 package main
 
 import (
+	"log"
+
 	"Avito-trainee/internal/config"
 	"Avito-trainee/internal/db"
-	"log"
 )
 
 func main() {
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		log.Fatalf("Can't load config %v\n", err)
+		log.Fatalf("Can't load config: %v\n", err)
 	}
 
 	dbConn, err := db.NewPostgresConnection(cfg.DatabaseURL)
