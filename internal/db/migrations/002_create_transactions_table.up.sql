@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     user_id INTEGER NOT NULL,
     type VARCHAR(20) NOT NULL,
     counterparty VARCHAR(50),
+    merch VARCHAR(50),
     amount INTEGER NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     CONSTRAINT fk_user

@@ -1,10 +1,15 @@
 package main
 
 import (
+	"Avito-trainee/internal/auth"
+	"Avito-trainee/internal/coin"
+	"Avito-trainee/internal/merch"
 	"log"
 
 	"Avito-trainee/internal/config"
 	"Avito-trainee/internal/db"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func main() {
@@ -19,7 +24,17 @@ func main() {
 	}
 	defer dbConn.Close()
 
+	err = db.RunMigrations(cfg.DatabaseURL)
+	if err != nil {
+		log.Fatalf("Migration failed: %v", err)
+	}
+
 	// TODO: init services
+	authService := auth.NewService(dbConn, cfg.JWTSecret)
+	coinService := coin.NewService(dbConn)
+	merchService := merch.NewService(dbConn)
+
+	_, _, _ = authService, coinService, merchService
 
 	// TODO: init router
 
