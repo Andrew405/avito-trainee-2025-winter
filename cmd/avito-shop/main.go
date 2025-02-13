@@ -3,6 +3,7 @@ package main
 import (
 	"Avito-trainee/internal/auth"
 	"Avito-trainee/internal/coin"
+	"Avito-trainee/internal/info"
 	"Avito-trainee/internal/merch"
 	"log"
 
@@ -29,12 +30,12 @@ func main() {
 		log.Fatalf("Migration failed: %v", err)
 	}
 
-	// TODO: init services
 	authService := auth.NewAuthService(dbConn, cfg.JWTSecret)
 	coinService := coin.NewCoinService(dbConn)
 	merchService := merch.NewMerchService(dbConn)
+	infoService := info.NewInfoService(dbConn)
 
-	_, _, _ = authService, coinService, merchService
+	_, _, _, _ = authService, coinService, merchService, infoService
 
 	// TODO: init router
 
