@@ -18,7 +18,7 @@ type service struct {
 	jwtManager *JWTManager
 }
 
-func NewService(db *sql.DB, jwtSecret string) Service {
+func NewAuthService(db *sql.DB, jwtSecret string) Service {
 	jwtManager := NewJWTManager(jwtSecret, 24*60*60*time.Second)
 	return &service{
 		db:         db,

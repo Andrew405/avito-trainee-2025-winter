@@ -30,9 +30,9 @@ func main() {
 	}
 
 	// TODO: init services
-	authService := auth.NewService(dbConn, cfg.JWTSecret)
-	coinService := coin.NewService(dbConn)
-	merchService := merch.NewService(dbConn)
+	authService := auth.NewAuthService(dbConn, cfg.JWTSecret)
+	coinService := coin.NewCoinService(dbConn)
+	merchService := merch.NewMerchService(dbConn)
 
 	_, _, _ = authService, coinService, merchService
 

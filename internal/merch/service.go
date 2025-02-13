@@ -33,7 +33,7 @@ type service struct {
 	db *sql.DB
 }
 
-func NewService(db *sql.DB) Service {
+func NewMerchService(db *sql.DB) Service {
 	return &service{db: db}
 }
 func (s *service) BuyItem(ctx context.Context, userID int, item string) error {

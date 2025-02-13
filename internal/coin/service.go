@@ -20,7 +20,7 @@ type service struct {
 	db *sql.DB
 }
 
-func NewService(db *sql.DB) Service {
+func NewCoinService(db *sql.DB) Service {
 	return &service{db: db}
 }
 
