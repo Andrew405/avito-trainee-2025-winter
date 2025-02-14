@@ -30,7 +30,9 @@ func LoadConfig() (*Config, error) {
 
 	// Загрузка переменных окружения из .env файла
 	if err := godotenv.Load(envPath); err != nil {
-		return nil, errors.New("failed to load .env file")
+		if err := godotenv.Load("/app/.env"); err != nil {
+			return nil, errors.New("failed to load .env file")
+		}
 	}
 
 	conf := &Config{}
