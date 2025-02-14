@@ -2,7 +2,9 @@ package config
 
 import (
 	"errors"
+	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/joho/godotenv"
@@ -17,8 +19,17 @@ type Config struct {
 }
 
 func LoadConfig() (*Config, error) {
+	// Получаем текущую рабочую директорию
+	currentDir, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("failed to get current working directory: %v", err)
+	}
+
+	// Формируем абсолютный путь к .env
+	envPath := filepath.Join(currentDir, ".env")
+
 	// Загрузка переменных окружения из .env файла
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load(envPath); err != nil {
 		return nil, errors.New("failed to load .env file")
 	}
 

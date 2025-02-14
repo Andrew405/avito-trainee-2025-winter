@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/golang-migrate/migrate/v4"
+	"os"
+	"path/filepath"
 	"time"
 
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -29,7 +31,19 @@ func NewPostgresConnection(databaseURL string) (*sql.DB, error) {
 }
 
 func RunMigrations(databaseURL string) error {
-	m, err := migrate.New("file://internal/db/migrations", databaseURL)
+	// Получаем абсолютный путь к корневой директории проекта
+	rootDir, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	// Формируем путь к миграциям
+	migrationsPath := filepath.Join(rootDir, "internal", "db", "migrations")
+
+	// Создаем источник миграций
+	sourceURL := "file://" + migrationsPath
+
+	m, err := migrate.New(sourceURL, databaseURL)
 	if err != nil {
 		return err
 	}

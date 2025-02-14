@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 )
 
 var (
@@ -45,6 +46,7 @@ func (s *service) BuyItem(ctx context.Context, userID int, item string) error {
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
+		log.Printf("Error starting transaction: %v", err)
 		return fmt.Errorf("%v: unable to start transaction: %w", op, err)
 	}
 	defer tx.Rollback()
@@ -57,12 +59,15 @@ func (s *service) BuyItem(ctx context.Context, userID int, item string) error {
 	).Scan(&coins)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
+			log.Printf("User not found: %v", err)
 			return fmt.Errorf("%v: unable to find user: %v: %w", op, userID, err)
 		}
+		log.Printf("Unable to read balance: %v", err)
 		return fmt.Errorf("%v: unable to read balance: %w", op, err)
 	}
 
 	if coins < price {
+		log.Printf("Not enough coins")
 		return ErrInsufficientCoins
 	}
 
@@ -74,6 +79,7 @@ func (s *service) BuyItem(ctx context.Context, userID int, item string) error {
 		userID,
 	)
 	if err != nil {
+		log.Printf("Debit error: %v", err)
 		return fmt.Errorf("%v: debit error: %w", op, err)
 	}
 
@@ -88,6 +94,7 @@ func (s *service) BuyItem(ctx context.Context, userID int, item string) error {
 		price,
 	)
 	if err != nil {
+		log.Printf("Transaction error: %v", err)
 		return fmt.Errorf("%v: transaction error: %w", op, err)
 	}
 
@@ -96,12 +103,13 @@ func (s *service) BuyItem(ctx context.Context, userID int, item string) error {
 		ctx,
 		`INSERT INTO inventory (user_id, item_type, quantity) 
 				VALUES ($1, $2, 1) 
-				ON CONFLICT (user_id, quantity) 
-    			DO UPDATE SET quantity = quantity + 1`,
+				ON CONFLICT (user_id, item_type) 
+    			DO UPDATE SET quantity = inventory.quantity + 1`,
 		userID,
 		item,
 	)
 	if err != nil {
+		log.Printf("Inventory error: %v", err)
 		return fmt.Errorf("%v: unable to update inventory: %w", op, err)
 	}
 
