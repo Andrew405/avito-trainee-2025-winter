@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/golang-migrate/migrate/v4"
+	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -19,8 +20,8 @@ func NewPostgresConnection(databaseURL string) (*sql.DB, error) {
 		return nil, err
 	}
 
-	dbConn.SetMaxOpenConns(25)                 // Максимальное количество открытых соединений
-	dbConn.SetMaxIdleConns(25)                 // Максимальное количество простаивающих соединений
+	dbConn.SetMaxOpenConns(100)                // Максимальное количество открытых соединений
+	dbConn.SetMaxIdleConns(100)                // Максимальное количество простаивающих соединений
 	dbConn.SetConnMaxLifetime(5 * time.Minute) // Максимальное время жизни соединения
 
 	if err := dbConn.Ping(); err != nil {
@@ -45,6 +46,7 @@ func RunMigrations(databaseURL string) error {
 
 	m, err := migrate.New(sourceURL, databaseURL)
 	if err != nil {
+		log.Printf("Failed to initialize migrations: %v", err)
 		return err
 	}
 	defer m.Close()
@@ -53,9 +55,12 @@ func RunMigrations(databaseURL string) error {
 	if err := m.Up(); err != nil {
 		if errors.Is(err, migrate.ErrNoChange) {
 			// Если нет изменений, это нормально
+			log.Println("No new migrations to apply")
 			return nil
 		}
+		log.Printf("Migration failed: %v", err)
 		return err
 	}
+	log.Println("Migrations applied successfully")
 	return nil
 }
