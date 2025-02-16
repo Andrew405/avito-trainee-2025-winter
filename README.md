@@ -4,7 +4,7 @@
 Для того чтобы запустить приложение локально или через Docker необходимо создать .env файл со следующими параметрами:
 - APP_ENV=(development, production и т.д.)
 - PORT=(укажите здесь порт, который будет прослушивать сервер)
-- DATABASE_URL=(адрес базы данных в формате: схема://имя_пользователя:пароль@хост:порт/имя_базы_данных?sslmode=disable, пример: postgres://postgres:password@localhost:5432/avito_shop?sslmode=disable)
+- DATABASE_URL=(адрес базы данных в формате: схема://имя_пользователя:пароль@хост:порт/имя_базы_данных?sslmode=disable, пример: postgres://postgres:password@localhost:5432/avito_shop?sslmode=disable, имя пользователя, пароль и имя базы данных указаны в файле docker_compose.yaml)
 - JWT_SECRET=(ваш JWT-ключ)
 - READ_TIMEOUT=(таймаут чтения запросов (в секундах))
 
